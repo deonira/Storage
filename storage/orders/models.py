@@ -5,9 +5,9 @@ from datetime import datetime
 from enum import Enum
 
 class OrderStatus(str, Enum):
-    in_process = "в процессе"
-    shipped = "отправлен"
-    delivered = "доставлен"
+    in_process = "in process"
+    shipped = "shipped"
+    delivered = "delivered"
 
 class Order(Base):
     __tablename__ = "orders"

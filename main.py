@@ -11,7 +11,7 @@ app.include_router(product_router)
 app.include_router(order_router)
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
-    return "Управление складом - Тестовое задание"
+    return "test"
 
 if __name__ == "__main__":
     import uvicorn

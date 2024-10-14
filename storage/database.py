@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 DATABASE_URL = "postgresql://postgres:123456@db:5432/storagedb"
 
@@ -10,3 +10,10 @@ Base = declarative_base()
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+
+def get_db() -> Session:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
