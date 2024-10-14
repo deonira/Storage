@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: storagedb
+      POSTGRES_DB: test_storagedb
     ports:
       - "5432:5432"
     healthcheck:
@@ -19,6 +19,15 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: "postgresql://postgres:123456@localhost:5432/storagedb"
+      DATABASE_URL: "postgresql://postgres:123456@db:5432/storagedb"
+      TEST_DATABASE_URL: "postgresql://postgres:123456@db:5432/test_storagedb"
     ports:
       - "8000:8000"
+
+  test:
+    build: .
+    depends_on:
+      - db
+    environment:
+      TEST_DATABASE_URL: "postgresql://postgres:123456@db:5432/test_storagedb"
+    command: pytest

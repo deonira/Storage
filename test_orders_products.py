@@ -1,3 +1,4 @@
+import os
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,10 +8,10 @@ from storage.database import Base, get_db
 from storage.orders.schemas import OrderItemCreate
 from fastapi import Depends
 from pydantic import ValidationError
-TEST_DATABASE_URL = "postgresql://postgres:123456@localhost:5432/test_storagedb"
+
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", "postgresql://postgres:123456@db:5432/test_storagedb")
 engine = create_engine(TEST_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 
 def init_test_db():
     Base.metadata.create_all(bind=engine)
