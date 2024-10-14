@@ -1,10 +1,11 @@
+version: '3.8'
+
 services:
   db:
     image: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: test_storagedb
     ports:
       - "5432:5432"
     healthcheck:
@@ -12,6 +13,10 @@ services:
       interval: 10s
       retries: 5
       timeout: 5s
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: postgres
+    restart: always
 
   app:
     build: .
@@ -20,14 +25,20 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: "postgresql://postgres:123456@db:5432/storagedb"
-      TEST_DATABASE_URL: "postgresql://postgres:123456@db:5432/test_storagedb"
     ports:
       - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    restart: always
 
   test:
     build: .
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       TEST_DATABASE_URL: "postgresql://postgres:123456@db:5432/test_storagedb"
     command: pytest
+    restart: on-failure
+
+volumes:
+  pgdata:
